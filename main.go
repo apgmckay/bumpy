@@ -1,8 +1,15 @@
 package main
 
-import "bumpy/package/server"
+import (
+	"bumpy/cmd"
+	"fmt"
+	"os"
+)
 
 func main() {
-	bumpy := server.New()
-	bumpy.Run()
+	err := cmd.Execute()
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
 }
