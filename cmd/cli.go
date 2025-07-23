@@ -3,6 +3,7 @@ package cmd
 import (
 	"bumpy/package/client"
 	"bumpy/package/server"
+	"context"
 	"fmt"
 	"io"
 	"log"
@@ -11,7 +12,6 @@ import (
 
 	"github.com/charmbracelet/fang"
 	"github.com/spf13/cobra"
-	"golang.org/x/net/context"
 )
 
 var rootCmd = BumpyRootCmd()
@@ -79,12 +79,13 @@ var bumpyMajorCmd = &cobra.Command{
 			}
 		}
 
-		queryParams := make(map[string]string, 2)
+		params := make(map[string]string, 2)
 
-		queryParams["pre-release"] = cmd.Flag("pre-release").Value.String()
-		queryParams["build"] = cmd.Flag("build").Value.String()
+		params["version"] = cmd.Flag("version").Value.String()
+		params["pre-release"] = cmd.Flag("pre-release").Value.String()
+		params["build"] = cmd.Flag("build").Value.String()
 
-		bumpedVersion, err := c.BumpMajor(version, queryParams)
+		bumpedVersion, err := c.BumpMajor(params)
 		if err != nil {
 			return err
 		}
@@ -119,12 +120,13 @@ var bumpyMinorCmd = &cobra.Command{
 			}
 		}
 
-		queryParams := make(map[string]string, 2)
+		params := make(map[string]string, 2)
 
-		queryParams["pre-release"] = cmd.Flag("pre-release").Value.String()
-		queryParams["build"] = cmd.Flag("build").Value.String()
+		params["version"] = cmd.Flag("version").Value.String()
+		params["pre-release"] = cmd.Flag("pre-release").Value.String()
+		params["build"] = cmd.Flag("build").Value.String()
 
-		bumpedVersion, err := c.BumpMinor(version, queryParams)
+		bumpedVersion, err := c.BumpMinor(params)
 		if err != nil {
 			return err
 		}
@@ -159,12 +161,13 @@ var bumpyPatchCmd = &cobra.Command{
 			}
 		}
 
-		queryParams := make(map[string]string, 2)
+		params := make(map[string]string, 2)
 
-		queryParams["pre-release"] = cmd.Flag("pre-release").Value.String()
-		queryParams["build"] = cmd.Flag("build").Value.String()
+		params["version"] = cmd.Flag("version").Value.String()
+		params["pre-release"] = cmd.Flag("pre-release").Value.String()
+		params["build"] = cmd.Flag("build").Value.String()
 
-		bumpedVersion, err := c.BumpPatch(version, queryParams)
+		bumpedVersion, err := c.BumpPatch(params)
 		if err != nil {
 			return err
 		}

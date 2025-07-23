@@ -39,9 +39,9 @@ func New(endpoint, timeDurationString string) (Client, error) {
 	}, nil
 }
 
-func (c Client) BumpMajor(version string, queryParams map[string]string) (string, error) {
-	endpoint := fmt.Sprintf("%s/api/v%d/major/%s", c.URL, v1, version)
-	endpoint = c.genURLEndpoint(endpoint, queryParams)
+func (c Client) BumpMajor(params map[string]string) (string, error) {
+	endpoint := fmt.Sprintf("%s/api/v%d/major/%s", c.URL, v1, params["version"])
+	endpoint = c.genURLQueryParams(endpoint, params)
 
 	resp, err := c.httpClient.Get(endpoint)
 	if err != nil {
@@ -65,9 +65,9 @@ func (c Client) BumpMajor(version string, queryParams map[string]string) (string
 	return bumpedVersion.Version, nil
 }
 
-func (c Client) BumpMinor(version string, queryParams map[string]string) (string, error) {
-	endpoint := fmt.Sprintf("%s/api/v%d/minor/%s", c.URL, v1, version)
-	endpoint = c.genURLEndpoint(endpoint, queryParams)
+func (c Client) BumpMinor(params map[string]string) (string, error) {
+	endpoint := fmt.Sprintf("%s/api/v%d/minor/%s", c.URL, v1, params["version"])
+	endpoint = c.genURLQueryParams(endpoint, params)
 
 	resp, err := c.httpClient.Get(endpoint)
 	if err != nil {
@@ -91,9 +91,10 @@ func (c Client) BumpMinor(version string, queryParams map[string]string) (string
 	return bumpedVersion.Version, nil
 }
 
-func (c Client) BumpPatch(version string, queryParams map[string]string) (string, error) {
-	endpoint := fmt.Sprintf("%s/api/v%d/patch/%s", c.URL, v1, version)
-	endpoint = c.genURLEndpoint(endpoint, queryParams)
+func (c Client) BumpPatch(params map[string]string) (string, error) {
+	endpoint := fmt.Sprintf("%s/api/v%d/patch/%s", c.URL, v1, params["version"])
+
+	endpoint = c.genURLQueryParams(endpoint, params)
 
 	resp, err := c.httpClient.Get(endpoint)
 	if err != nil {
@@ -117,14 +118,19 @@ func (c Client) BumpPatch(version string, queryParams map[string]string) (string
 	return bumpedVersion.Version, nil
 }
 
-func (c Client) genURLEndpoint(endpoint string, queryParams map[string]string) string {
+func (c Client) genURLQueryParams(endpoint string, queryParams map[string]string) string {
 	firstParam := true
+
+	delete(queryParams, "version")
+
 	for k, v := range queryParams {
-		if firstParam {
-			endpoint = fmt.Sprintf("%s?%s=%s", endpoint, k, v)
-			firstParam = false
-		} else {
-			endpoint = fmt.Sprintf("%s&%s=%s", endpoint, k, v)
+		if v != "" {
+			if firstParam {
+				endpoint = fmt.Sprintf("%s?%s=%s", endpoint, k, v)
+				firstParam = false
+			} else {
+				endpoint = fmt.Sprintf("%s&%s=%s", endpoint, k, v)
+			}
 		}
 	}
 
