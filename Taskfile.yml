@@ -9,3 +9,9 @@ tasks:
   build:
     cmds:
       - go build .
+  cloc_project:
+    desc: Count lines of code for the project
+    cmds:
+      - echo "Counting lines of code for project..."
+      - find . -name "*.go" | xargs cloc --force-lang=Go
+      - echo "Counting line of code done."
