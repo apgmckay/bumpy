@@ -25,6 +25,12 @@ func New() BumpyServer {
 	}
 }
 
+/*
+	TODO:
+		- Enable in client
+		- Enable in cli
+*/
+
 func (s BumpyServer) Run() {
 	apiV1 := s.Engine.Group(fmt.Sprintf("/api/v%d", v1))
 	{
@@ -36,6 +42,26 @@ func (s BumpyServer) Run() {
 				log.Errorf("%s", err)
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
+			}
+
+			inputPVName := c.Query("pre-release")
+
+			if len(inputPVName) != 0 {
+				pVName, err := semver.NewPRVersion(inputPVName)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				}
+				v.Pre = append(v.Pre, pVName)
+			}
+
+			inputBuildVersion := c.Query("build")
+
+			if len(inputBuildVersion) != 0 {
+				bVName, err := semver.NewBuildVersion(inputBuildVersion)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				}
+				v.Build = append(v.Build, bVName)
 			}
 
 			err = v.IncrementMajor()
@@ -61,6 +87,26 @@ func (s BumpyServer) Run() {
 				return
 			}
 
+			inputPVName := c.Query("pre-release")
+
+			if len(inputPVName) != 0 {
+				pVName, err := semver.NewPRVersion(inputPVName)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				}
+				v.Pre = append(v.Pre, pVName)
+			}
+
+			inputBuildVersion := c.Query("build")
+
+			if len(inputBuildVersion) != 0 {
+				bVName, err := semver.NewBuildVersion(inputBuildVersion)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"err": err.Error()})
+				}
+				v.Build = append(v.Build, bVName)
+			}
+
 			err = v.IncrementMinor()
 
 			if err != nil {
@@ -82,6 +128,26 @@ func (s BumpyServer) Run() {
 				log.Errorf("%s", err)
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
+			}
+
+			inputPVName := c.Query("pre-release")
+
+			if len(inputPVName) != 0 {
+				pVName, err := semver.NewPRVersion(inputPVName)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				}
+				v.Pre = append(v.Pre, pVName)
+			}
+
+			inputBuildVersion := c.Query("build")
+
+			if len(inputBuildVersion) != 0 {
+				bVName, err := semver.NewBuildVersion(inputBuildVersion)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"err": err.Error()})
+				}
+				v.Build = append(v.Build, bVName)
 			}
 
 			err = v.IncrementPatch()

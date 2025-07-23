@@ -23,8 +23,17 @@ func init() {
 	rootCmd.AddCommand(bumpyPatchCmd)
 
 	bumpyMajorCmd.PersistentFlags().StringP("version", "v", "", "version you wish to bump")
+	bumpyMajorCmd.PersistentFlags().StringP("pre-release", "p", "", "pre-release version tag to append to the version number")
+	bumpyMajorCmd.PersistentFlags().StringP("build", "b", "", "build version tag to append to the version number")
+
 	bumpyMinorCmd.PersistentFlags().StringP("version", "v", "", "version you wish to bump")
+	bumpyMinorCmd.PersistentFlags().StringP("pre-release", "p", "", "pre-release version tag to append to the version number")
+	bumpyMinorCmd.PersistentFlags().StringP("build", "b", "", "build version tag to append to the version number")
+
 	bumpyPatchCmd.PersistentFlags().StringP("version", "v", "", "version you wish to bump")
+	bumpyPatchCmd.PersistentFlags().StringP("pre-release", "p", "", "pre-release version tag to append to the version number")
+	bumpyPatchCmd.PersistentFlags().StringP("build", "b", "", "build version tag to append to the version number")
+
 }
 
 func Execute() error {
@@ -70,7 +79,12 @@ var bumpyMajorCmd = &cobra.Command{
 			}
 		}
 
-		bumpedVersion, err := c.BumpMajor(version)
+		queryParams := make(map[string]string, 2)
+
+		queryParams["pre-release"] = cmd.Flag("pre-release").Value.String()
+		queryParams["build"] = cmd.Flag("build").Value.String()
+
+		bumpedVersion, err := c.BumpMajor(version, queryParams)
 		if err != nil {
 			return err
 		}
@@ -105,7 +119,12 @@ var bumpyMinorCmd = &cobra.Command{
 			}
 		}
 
-		bumpedVersion, err := c.BumpMinor(version)
+		queryParams := make(map[string]string, 2)
+
+		queryParams["pre-release"] = cmd.Flag("pre-release").Value.String()
+		queryParams["build"] = cmd.Flag("build").Value.String()
+
+		bumpedVersion, err := c.BumpMinor(version, queryParams)
 		if err != nil {
 			return err
 		}
@@ -140,7 +159,12 @@ var bumpyPatchCmd = &cobra.Command{
 			}
 		}
 
-		bumpedVersion, err := c.BumpPatch(version)
+		queryParams := make(map[string]string, 2)
+
+		queryParams["pre-release"] = cmd.Flag("pre-release").Value.String()
+		queryParams["build"] = cmd.Flag("build").Value.String()
+
+		bumpedVersion, err := c.BumpPatch(version, queryParams)
 		if err != nil {
 			return err
 		}

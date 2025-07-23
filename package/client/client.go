@@ -39,8 +39,10 @@ func New(endpoint, timeDurationString string) (Client, error) {
 	}, nil
 }
 
-func (c Client) BumpMajor(version string) (string, error) {
+func (c Client) BumpMajor(version string, queryParams map[string]string) (string, error) {
 	endpoint := fmt.Sprintf("%s/api/v%d/major/%s", c.URL, v1, version)
+	endpoint = c.genURLEndpoint(endpoint, queryParams)
+
 	resp, err := c.httpClient.Get(endpoint)
 	if err != nil {
 		return "", err
@@ -63,8 +65,10 @@ func (c Client) BumpMajor(version string) (string, error) {
 	return bumpedVersion.Version, nil
 }
 
-func (c Client) BumpMinor(version string) (string, error) {
+func (c Client) BumpMinor(version string, queryParams map[string]string) (string, error) {
 	endpoint := fmt.Sprintf("%s/api/v%d/minor/%s", c.URL, v1, version)
+	endpoint = c.genURLEndpoint(endpoint, queryParams)
+
 	resp, err := c.httpClient.Get(endpoint)
 	if err != nil {
 		return "", err
@@ -87,8 +91,10 @@ func (c Client) BumpMinor(version string) (string, error) {
 	return bumpedVersion.Version, nil
 }
 
-func (c Client) BumpPatch(version string) (string, error) {
+func (c Client) BumpPatch(version string, queryParams map[string]string) (string, error) {
 	endpoint := fmt.Sprintf("%s/api/v%d/patch/%s", c.URL, v1, version)
+	endpoint = c.genURLEndpoint(endpoint, queryParams)
+
 	resp, err := c.httpClient.Get(endpoint)
 	if err != nil {
 		return "", err
@@ -109,4 +115,18 @@ func (c Client) BumpPatch(version string) (string, error) {
 	json.Unmarshal(body, &bumpedVersion)
 
 	return bumpedVersion.Version, nil
+}
+
+func (c Client) genURLEndpoint(endpoint string, queryParams map[string]string) string {
+	firstParam := true
+	for k, v := range queryParams {
+		if firstParam {
+			endpoint = fmt.Sprintf("%s?%s=%s", endpoint, k, v)
+			firstParam = false
+		} else {
+			endpoint = fmt.Sprintf("%s&%s=%s", endpoint, k, v)
+		}
+	}
+
+	return endpoint
 }
