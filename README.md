@@ -10,3 +10,5 @@ $ echo "1.0.0" | bumpy major
 ```
 
 This allows you to use bumpy to create automation from things like on disk `Version` files as part of CI/CD pipelines.
+
+Pre-Release and Build versions are also supported using the `--build=<name>` and `--pre-release=<name>` flags, further specification can be found in the [BNF section of the semver doc](https://semver.org/#backusnaur-form-grammar-for-valid-semver-versions).
