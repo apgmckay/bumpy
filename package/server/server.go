@@ -25,12 +25,6 @@ func New() BumpyServer {
 	}
 }
 
-/*
-	TODO:
-		- Enable in client
-		- Enable in cli
-*/
-
 func (s BumpyServer) Run() {
 	apiV1 := s.Engine.Group(fmt.Sprintf("/api/v%d", v1))
 	{
