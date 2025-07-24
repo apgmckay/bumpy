@@ -7,8 +7,15 @@ vars:
 
 tasks:
   build:
+    desc: Builds go binary
     cmds:
+      - echo "Building bumpy go..."
       - go build .
+  build_docker:
+    desc: Builds docker image of bumpy
+    cmds:
+      - echo "Build bumpy docker image..."
+      - docker build .
   cloc_project:
     desc: Count lines of code for the project
     cmds:
