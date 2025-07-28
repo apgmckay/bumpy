@@ -3,7 +3,8 @@
 version: '3'
 
 vars:
-  GREETING: Hello, World!
+  DOCKER_RUN: 'docker run -p 8080:8080 bumpy:latest'
+  LOCAL_RUN: './bumpy server'
 
 tasks:
   build:
@@ -11,11 +12,15 @@ tasks:
     cmds:
       - echo "Building bumpy go..."
       - go build .
+      - echo "To run server:"
+      - echo "{{ .LOCAL_RUN }}"
   build_docker:
     desc: Builds docker image of bumpy
     cmds:
       - echo "Build bumpy docker image..."
-      - docker build .
+      - docker build . -t bumpy:$(git rev-parse --short=6 HEAD) -t bumpy:latest 
+      - echo "To run server:"
+      - echo "{{ .DOCKER_RUN }}"
   cloc_project:
     desc: Count lines of code for the project
     cmds:
