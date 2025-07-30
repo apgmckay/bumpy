@@ -1,0 +1,43 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bumpy-deployment
+  annotations:
+    environment: local
+  labels: 
+    name: bumpy
+    teir: backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: bumpy
+  template:
+    metadata:
+      labels:
+        app: bumpy
+    spec:
+      containers:
+      - name: bumpy
+        image: apgmckay/bumpy
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bumpy
+  annotations:
+    environment: local
+  labels: 
+    name: bumpy
+    teir: backend
+spec:
+  selector:
+    app: bumpy
+  type: NodePort
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 30080
