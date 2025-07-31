@@ -2,14 +2,14 @@ package main
 
 import (
 	"bumpy/cmd"
-	"fmt"
+	"log"
 	"os"
 )
 
 func main() {
 	err := cmd.Execute()
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 		os.Exit(1)
 	}
 }
