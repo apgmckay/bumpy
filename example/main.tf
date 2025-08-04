@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     bumpy = {
-      source  = "registry.terraform.io/bumpycorp/bumpy" # short-hand for registry.terraform.io/bumpycorp/bumpy
+      source  = "bumpycorp/bumpy" # short-hand for registry.terraform.io/bumpycorp/bumpy
       version = "0.0.1"
     }
   }

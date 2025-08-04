@@ -21,6 +21,12 @@ tasks:
       - docker build . -t bumpy:$(git rev-parse --short=6 HEAD) -t bumpy:latest 
       - echo "To run server:"
       - echo "{{ .DOCKER_RUN }}"
+  build_terraform_provider:
+    desc: Builds bumpy terraform build_terraform_provider
+    cmds:
+      - echo "Building bumpy terraform provider..."
+      - go build -o terraform_provider/terraform-provider-bumpy terraform_provider/main.go
+      - echo "Built in dir terraform_provider"
   cloc_project:
     desc: Count lines of code for the project
     cmds:
