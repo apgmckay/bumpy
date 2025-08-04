@@ -32,7 +32,7 @@ type BumpyProviderModel struct {
 }
 
 func (p *BumpyProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
-	resp.TypeName = "scaffolding"
+	resp.TypeName = "bumpy"
 	resp.Version = p.version
 }
 

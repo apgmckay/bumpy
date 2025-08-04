@@ -26,34 +26,27 @@ type BumpyMajorDataSource struct {
 
 // BumpyMajorDataSourceModel describes the data source data model.
 type BumpyMajorDataSourceModel struct {
-	ConfigurableAttribute types.String `tfsdk:"configurable_attribute"`
-	Id                    types.String `tfsdk:"id"`
+	Version types.String `tfsdk:"version"`
 }
 
 func (d *BumpyMajorDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_example"
+	resp.TypeName = req.ProviderTypeName + "_major"
 }
 
 func (d *BumpyMajorDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
-		// This description is used by the documentation generator and the language server.
-		MarkdownDescription: "BumpyMajor data source",
 
+	resp.Schema = schema.Schema{
+		MarkdownDescription: "BumpyMajor data source",
 		Attributes: map[string]schema.Attribute{
-			"current_version": schema.StringAttribute{
-				MarkdownDescription: "BumpyMajor current package version",
-				Optional:            false,
-			},
 			"version": schema.StringAttribute{
 				MarkdownDescription: "BumpyMajor bumped version",
-				Computed:            true,
+				Required:            true,
 			},
 		},
 	}
 }
 
 func (d *BumpyMajorDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	// Prevent panic if the provider has not been configured.
 	if req.ProviderData == nil {
 		return
 	}
@@ -75,38 +68,25 @@ func (d *BumpyMajorDataSource) Configure(ctx context.Context, req datasource.Con
 func (d *BumpyMajorDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data BumpyMajorDataSourceModel
 
-	// Read Terraform configuration data into the model
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// If applicable, this is a great opportunity to initialize any necessary
-	// provider client data and make a call using it.
-	// httpResp, err := d.client.Do(httpReq)
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read example, got error: %s", err))
-	//     return
-	// }
-
-	c, err := client.New("", "")
+	c, err := client.New("http://localhost:8080", "5s")
 	if err != nil {
 		return
 	}
 
-	majorVersion, err := c.BumpMajor(map[string]string{})
+	majorVersion, err := c.BumpMajor(map[string]string{"version": data.Version.ValueString()})
 	if err != nil {
 		return
 	}
-	// For the purposes of this example code, hardcoding a response value to
-	// save into the Terraform state.
-	data.Id = types.StringValue(majorVersion)
 
-	// Write logs using the tflog package
-	// Documentation: https://terraform.io/plugin/log
+	data.Version = types.StringValue(majorVersion)
+
 	tflog.Trace(ctx, "read a data source")
 
-	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
