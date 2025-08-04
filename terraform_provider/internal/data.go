@@ -13,40 +13,55 @@ import (
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
-var _ datasource.DataSource = &BumpyMajorDataSource{}
+var _ datasource.DataSource = &BumpyDataSource{}
 
-func NewBumpyMajorDataSource() datasource.DataSource {
-	return &BumpyMajorDataSource{}
+func NewBumpyDataSource() datasource.DataSource {
+	return &BumpyDataSource{}
 }
 
-// BumpyMajorDataSource defines the data source implementation.
-type BumpyMajorDataSource struct {
+// BumpyDataSource defines the data source implementation.
+type BumpyDataSource struct {
 	client *http.Client
 }
 
-// BumpyMajorDataSourceModel describes the data source data model.
-type BumpyMajorDataSourceModel struct {
+// BumpyDataSourceModel describes the data source data model.
+type BumpyDataSourceModel struct {
+	MajorVersion types.String `tfsdk:"major_version"`
+	MinorVersion types.String `tfsdk:"minor_version"`
+	PatchVersion types.String `tfsdk:"patch_version"`
+
 	Version types.String `tfsdk:"version"`
 }
 
-func (d *BumpyMajorDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_major"
+func (d *BumpyDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName
 }
 
-func (d *BumpyMajorDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-
+func (d *BumpyDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "BumpyMajor data source",
+		MarkdownDescription: "Bumpy data source",
 		Attributes: map[string]schema.Attribute{
+			"major_version": schema.StringAttribute{
+				MarkdownDescription: "Bumpy input major version to bump",
+				Optional:            true,
+			},
+			"minor_version": schema.StringAttribute{
+				MarkdownDescription: "Bumpy input minor version to bump",
+				Optional:            true,
+			},
+			"patch_version": schema.StringAttribute{
+				MarkdownDescription: "Bumpy input patch version to bump",
+				Optional:            true,
+			},
 			"version": schema.StringAttribute{
-				MarkdownDescription: "BumpyMajor bumped version",
-				Required:            true,
+				MarkdownDescription: "Bumpy bumped version",
+				Computed:            true,
 			},
 		},
 	}
 }
 
-func (d *BumpyMajorDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *BumpyDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -65,8 +80,8 @@ func (d *BumpyMajorDataSource) Configure(ctx context.Context, req datasource.Con
 	d.client = client
 }
 
-func (d *BumpyMajorDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data BumpyMajorDataSourceModel
+func (d *BumpyDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var data BumpyDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -79,12 +94,30 @@ func (d *BumpyMajorDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		return
 	}
 
-	majorVersion, err := c.BumpMajor(map[string]string{"version": data.Version.ValueString()})
-	if err != nil {
-		return
+	var bumpedVersion string
+
+	if data.MajorVersion.ValueString() != "" {
+		bumpedVersion, err = c.BumpMajor(map[string]string{"version": data.MajorVersion.ValueString()})
+		if err != nil {
+			return
+		}
 	}
 
-	data.Version = types.StringValue(majorVersion)
+	if data.MinorVersion.ValueString() != "" {
+		bumpedVersion, err = c.BumpMinor(map[string]string{"version": data.MinorVersion.ValueString()})
+		if err != nil {
+			return
+		}
+	}
+
+	if data.PatchVersion.ValueString() != "" {
+		bumpedVersion, err = c.BumpPatch(map[string]string{"version": data.PatchVersion.ValueString()})
+		if err != nil {
+			return
+		}
+	}
+
+	data.Version = types.StringValue(bumpedVersion)
 
 	tflog.Trace(ctx, "read a data source")
 
