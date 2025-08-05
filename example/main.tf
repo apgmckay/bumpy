@@ -9,29 +9,35 @@ terraform {
 
 variable "input_version" {
   type    = string
-  default = "0.1.0"
+  default = "4.1.0"
 }
 
-data "bumpy" "major" {
-  major_version = var.input_version
+data "bumpy_major_version" "bump" {
+  version     = var.input_version
+  build       = substr(md5("hello"), 0, 6)
+  pre_release = "backend-feature-x"
 }
 
-data "bumpy" "minor" {
-  minor_version = var.input_version
+data "bumpy_minor_version" "bump" {
+  version     = var.input_version
+  build       = substr(md5("hello"), 0, 6)
+  pre_release = "backend-feature-x"
 }
 
-data "bumpy" "patch" {
-  patch_version = var.input_version
+data "bumpy_patch_version" "bump" {
+  version     = var.input_version
+  build       = substr(md5("hello"), 0, 6)
+  pre_release = "backend-feature-x"
 }
 
-output "major" {
-  value = data.bumpy.major.version
+output "bumpy_major" {
+  value = data.bumpy_major_version.bump.result
 }
 
-output "minor" {
-  value = data.bumpy.minor.version
+output "bumpy_minor" {
+  value = data.bumpy_minor_version.bump.result
 }
 
-output "patch" {
-  value = data.bumpy.patch.version
+output "bumpy_patch" {
+  value = data.bumpy_patch_version.bump.result
 }

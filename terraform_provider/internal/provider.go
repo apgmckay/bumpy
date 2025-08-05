@@ -75,7 +75,9 @@ func (p *BumpyProvider) EphemeralResources(ctx context.Context) []func() ephemer
 
 func (p *BumpyProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		NewBumpyDataSource,
+		NewBumpyMajorVersionDataSource,
+		NewBumpyMinorVersionDataSource,
+		NewBumpyPatchVersionDataSource,
 	}
 }
 
