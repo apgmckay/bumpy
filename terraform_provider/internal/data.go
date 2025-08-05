@@ -106,6 +106,7 @@ func (d *BumpyMajorVersionDataSource) Read(ctx context.Context, req datasource.R
 		"pre-release": data.PreRelease.ValueString(),
 		"build":       data.Build.ValueString(),
 	})
+
 	if err != nil {
 		return
 	}
@@ -185,6 +186,7 @@ func (d *BumpyMinorVersionDataSource) Read(ctx context.Context, req datasource.R
 		"pre-release": data.PreRelease.ValueString(),
 		"build":       data.Build.ValueString(),
 	})
+
 	if err != nil {
 		return
 	}
