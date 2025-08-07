@@ -1,7 +1,6 @@
 package client
 
 import (
-	"bumpy/package/server/responses"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -19,6 +18,8 @@ type Client struct {
 	URL        string
 	httpClient http.Client
 }
+
+var responses map[string]interface{}
 
 func New(endpoint, timeDurationString string) (Client, error) {
 	parsedEndpoint, err := url.ParseRequestURI(endpoint)
@@ -58,11 +59,9 @@ func (c Client) BumpMajor(params map[string]string) (string, error) {
 		return "", fmt.Errorf("error")
 	}
 
-	var bumpedVersion responses.BumpedVersion
+	json.Unmarshal(body, &responses)
 
-	json.Unmarshal(body, &bumpedVersion)
-
-	return bumpedVersion.Version, nil
+	return responses["version"].(string), nil
 }
 
 func (c Client) BumpMinor(params map[string]string) (string, error) {
@@ -84,11 +83,9 @@ func (c Client) BumpMinor(params map[string]string) (string, error) {
 		return "", fmt.Errorf("error")
 	}
 
-	var bumpedVersion responses.BumpedVersion
+	json.Unmarshal(body, &responses)
 
-	json.Unmarshal(body, &bumpedVersion)
-
-	return bumpedVersion.Version, nil
+	return responses["version"].(string), nil
 }
 
 func (c Client) BumpPatch(params map[string]string) (string, error) {
@@ -111,11 +108,9 @@ func (c Client) BumpPatch(params map[string]string) (string, error) {
 		return "", fmt.Errorf("error")
 	}
 
-	var bumpedVersion responses.BumpedVersion
+	json.Unmarshal(body, &responses)
 
-	json.Unmarshal(body, &bumpedVersion)
-
-	return bumpedVersion.Version, nil
+	return responses["version"].(string), nil
 }
 
 func (c Client) genURLQueryParams(endpoint string, queryParams map[string]string) string {
