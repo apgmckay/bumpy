@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"bumpy/package/client"
 	"bumpy/package/server"
 	"context"
 	"fmt"
@@ -10,6 +9,7 @@ import (
 	"os"
 	"strings"
 
+	client "github.com/apgmckay/bumpy-client"
 	"github.com/charmbracelet/fang"
 	"github.com/spf13/cobra"
 )

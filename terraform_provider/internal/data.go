@@ -1,11 +1,11 @@
 package provider
 
 import (
-	"bumpy/package/client"
 	"context"
 	"fmt"
 	"net/http"
 
+	client "github.com/apgmckay/bumpy-client"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"

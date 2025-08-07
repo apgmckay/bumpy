@@ -15,6 +15,8 @@ Pre-Release and Build versions are also supported using the `--build=<name>` and
 
 ## Development
 
+At the moment you will need to set `GOPRIVATE=github.com/apgmckay` in your environment to pull the client.
+
 This project uses [task](https://taskfile.dev/) to manage it's builds.
 
 ### Terraform Provider
