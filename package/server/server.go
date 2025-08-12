@@ -158,6 +158,20 @@ func (s BumpyServer) Run() {
 		})
 	}
 
+	s.Engine.GET("/", func(c *gin.Context) {
+		var endpoints []string
+		for _, route := range s.Engine.Routes() {
+			if route.Path == "/" {
+				continue
+			}
+			endpoints = append(endpoints, fmt.Sprintf("%s %s", route.Method, route.Path))
+		}
+
+		c.JSON(http.StatusOK, map[string]any{
+			"endpoints": endpoints,
+		})
+	})
+
 	/*
 		TODO:
 			- HTML endpoints go here
