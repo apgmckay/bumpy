@@ -38,20 +38,16 @@ func (s BumpyServer) Run() {
 				return
 			}
 
-			inputPVName := c.Query("pre-release")
-
-			if len(inputPVName) != 0 {
-				pVName, err := semver.NewPRVersion(inputPVName)
+			if len(c.Query("pre-release")) != 0 {
+				pVName, err := semver.NewPRVersion(c.Query("pre-release"))
 				if err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				}
 				v.Pre = append(v.Pre, pVName)
 			}
 
-			inputBuildVersion := c.Query("build")
-
-			if len(inputBuildVersion) != 0 {
-				bVName, err := semver.NewBuildVersion(inputBuildVersion)
+			if len(c.Query("build")) != 0 {
+				bVName, err := semver.NewBuildVersion(c.Query("build"))
 				if err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				}
@@ -81,22 +77,18 @@ func (s BumpyServer) Run() {
 				return
 			}
 
-			inputPVName := c.Query("pre-release")
-
-			if len(inputPVName) != 0 {
-				pVName, err := semver.NewPRVersion(inputPVName)
+			if len(c.Query("pre-release")) != 0 {
+				pVName, err := semver.NewPRVersion(c.Query("pre-release"))
 				if err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				}
 				v.Pre = append(v.Pre, pVName)
 			}
 
-			inputBuildVersion := c.Query("build")
-
-			if len(inputBuildVersion) != 0 {
-				bVName, err := semver.NewBuildVersion(inputBuildVersion)
+			if len(c.Query("build")) != 0 {
+				bVName, err := semver.NewBuildVersion(c.Query("build"))
 				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{"err": err.Error()})
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				}
 				v.Build = append(v.Build, bVName)
 			}
@@ -124,22 +116,18 @@ func (s BumpyServer) Run() {
 				return
 			}
 
-			inputPVName := c.Query("pre-release")
-
-			if len(inputPVName) != 0 {
-				pVName, err := semver.NewPRVersion(inputPVName)
+			if len(c.Query("pre-release")) != 0 {
+				pVName, err := semver.NewPRVersion(c.Query("pre-release"))
 				if err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				}
 				v.Pre = append(v.Pre, pVName)
 			}
 
-			inputBuildVersion := c.Query("build")
-
-			if len(inputBuildVersion) != 0 {
-				bVName, err := semver.NewBuildVersion(inputBuildVersion)
+			if len(c.Query("build")) != 0 {
+				bVName, err := semver.NewBuildVersion(c.Query("build"))
 				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{"err": err.Error()})
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				}
 				v.Build = append(v.Build, bVName)
 			}
