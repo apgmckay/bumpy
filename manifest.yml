@@ -20,7 +20,8 @@ spec:
     spec:
       containers:
       - name: bumpy
-        image: apgmckay/bumpy
+        image: apgmckay/bumpy:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
 ---
