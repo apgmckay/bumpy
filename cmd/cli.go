@@ -179,8 +179,9 @@ var bumpyPatchCmd = &cobra.Command{
 }
 
 var bumpyServerCmd = &cobra.Command{
-	Use:   "server",
-	Short: "Start running the bumpy web server",
+	Use:    "server",
+	Short:  "Start running the bumpy web server",
+	Hidden: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		server.New().Run()
 		return nil
