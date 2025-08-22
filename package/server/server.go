@@ -148,12 +148,8 @@ func (s BumpyServer) Run() {
 
 	s.Engine.GET("/", func(c *gin.Context) {
 		var endpoints []string
-		for _, route := range s.Engine.Routes() {
-			if route.Path == "/" {
-				continue
-			}
-			endpoints = append(endpoints, fmt.Sprintf("%s %s", route.Method, route.Path))
-		}
+
+		setEndpoints(&endpoints, s.Engine.Routes())
 
 		c.JSON(http.StatusOK, map[string]any{
 			"endpoints": endpoints,
@@ -166,4 +162,13 @@ func (s BumpyServer) Run() {
 	*/
 
 	s.Engine.Run(":8080")
+}
+
+func setEndpoints(e *[]string, routeInfo gin.RoutesInfo) {
+	for _, route := range routeInfo {
+		if route.Path == "/" {
+			continue
+		}
+		*e = append(*e, fmt.Sprintf("%s %s", route.Method, route.Path))
+	}
 }
