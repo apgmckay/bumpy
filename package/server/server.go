@@ -156,7 +156,6 @@ func (s BumpyServer) Run() {
 		}
 
 		c.JSON(http.StatusOK, map[string]any{
-			"hello":     "world",
 			"endpoints": endpoints,
 		})
 	})

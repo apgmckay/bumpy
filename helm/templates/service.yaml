@@ -10,11 +10,9 @@ metadata:
 spec:
   selector:
     app: "bumpy"
-  type: NodePort
   ports:
   - port: 8080
     targetPort: 8080
-    nodePort: 30081
 ---
 apiVersion: v1
 kind: Service
@@ -28,8 +26,6 @@ metadata:
 spec:
   selector:
     app: "bumpy"
-  type: NodePort
   ports:
   - port: 8080
     targetPort: 8080
-    nodePort: 30082
