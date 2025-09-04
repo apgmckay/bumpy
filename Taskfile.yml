@@ -30,9 +30,9 @@ tasks:
       - echo "Pushing done."
   build_and_push_docker:
     desc: Build and Push docker image
-    deps:
-      - build_docker
-      - push_docker
+    cmds:
+      - task: build_docker
+      - task: push_docker
   cloc_project:
     desc: Count lines of code for the project
     cmds:

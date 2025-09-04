@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: "bumpy"
+  name: "bumpy-active"
   annotations:
     environment: local
   labels: 
@@ -14,4 +14,22 @@ spec:
   ports:
   - port: 8080
     targetPort: 8080
-    nodePort: 30080
+    nodePort: 30081
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "bumpy-passive"
+  annotations:
+    environment: local
+  labels: 
+    name: "bumpy"
+    teir: backend
+spec:
+  selector:
+    app: "bumpy"
+  type: NodePort
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 30082
