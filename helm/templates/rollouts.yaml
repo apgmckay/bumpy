@@ -7,7 +7,13 @@ spec:
   strategy:
     blueGreen:
       activeService: {{ printf "%s-active" .Values.appName | quote }}
+      activeMetadata:
+        labels:
+          role: active
       previewService: {{ printf "%s-passive" .Values.appName | quote }}
+      previewMetadata:
+        labels:
+          role: passive
       autoPromotionEnabled: false
   revisionHistoryLimit: 2
   selector:
