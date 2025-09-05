@@ -1,36 +1,25 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: bumpy
+  name: {{ .Values.appName | quote }}
 spec:
   replicas: 5
-#   strategy:
-#     canary:
-#       steps:
-#       - setWeight: 20
-#       - pause: {}
-#       - setWeight: 40
-#       - pause: {duration: 10}
-#       - setWeight: 60
-#       - pause: {duration: 10}
-#       - setWeight: 80
-#       - pause: {duration: 10}
   strategy:
     blueGreen:
-      activeService: bumpy-active
-      previewService: bumpy-passive
+      activeService: {{ printf "%s-active" .Values.appName | quote }}
+      previewService: {{ printf "%s-passive" .Values.appName | quote }}
       autoPromotionEnabled: false
   revisionHistoryLimit: 2
   selector:
     matchLabels:
-      app: bumpy
+      app: {{ .Values.appName | quote }}
   template:
     metadata:
       labels:
-        app: bumpy
+        app: {{ .Values.appName | quote }}
     spec:
       containers:
-      - name: bumpy
+      - name: {{ .Values.appName | quote }}
         image: {{ required ".Values.image.repository must be set" .Values.image.repository | quote }}
         ports:
         - name: http

@@ -1,14 +1,14 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: bumpy-hpa
+  name: {{ .Values.appName | quote }}
   labels:
-    app: bumpy
+    app: {{ .Values.appName | quote }}
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: bumpy-deployment
+    apiVersion: argoproj.io/v1alpha1
+    kind: Rollout
+    name: {{ .Values.appName | quote }}
   minReplicas: {{ .Values.autoscaling.minReplicas | default 1 }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas | default 10 }}
   metrics:

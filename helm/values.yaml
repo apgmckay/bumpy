@@ -1,3 +1,4 @@
+appName: bumpy
 replicaCount: 1
 image:
   repository: apgmckay/bumpy
@@ -39,7 +40,7 @@ readinessProbe:
     port: http
 autoscaling:
   enabled: false
-  minReplicas: 1
+  minReplicas: 5
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
   targetMemoryUtilizationPercentage: 60
