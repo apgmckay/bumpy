@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: {{ .Values.appName | quote }}
+spec:
+  replicas: 5
+  strategy:
+    blueGreen:
+      activeService: {{ printf "%s-active" .Values.appName | quote }}
+      activeMetadata:
+        labels:
+          role: active
+      previewService: {{ printf "%s-passive" .Values.appName | quote }}
+      previewMetadata:
+        labels:
+          role: passive
+      autoPromotionEnabled: false
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: {{ .Values.appName | quote }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName | quote }}
+    spec:
+      containers:
+      - name: {{ .Values.appName | quote }}
+        image: {{ required ".Values.image.repository must be set" .Values.image.repository | quote }}
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        resources:
+          requests:
+            memory: 32Mi
+            cpu: 5m

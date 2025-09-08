@@ -5,7 +5,8 @@ version: '3'
 vars:
   DOCKER_RUN: 'docker run -p 8080:8080 bumpy:latest'
   LOCAL_RUN: './bumpy server'
-
+  COMMIT_SHA:
+    sh: git rev-parse --short=6 HEAD
 tasks:
   build:
     desc: Builds go binary
@@ -18,20 +19,20 @@ tasks:
     desc: Builds docker image of bumpy
     cmds:
       - echo "Build bumpy docker image..."
-      - docker build . -t bumpy:$(git rev-parse --short=6 HEAD) -t bumpy:$(git rev-parse --short=6 HEAD) -t bumpy:latest -t apgmckay/bumpy:latest
+      - docker build . -t bumpy:{{ .COMMIT_SHA }} -t apgmckay/bumpy:{{ .COMMIT_SHA }}
       - echo "To run server:"
       - echo "{{ .DOCKER_RUN }}"
   push_docker:
     desc: Push docker image of bumpy
     cmds:
       - echo "Push bumpmy docker images..."
-      - docker push apgmckay/bumpy:latest
+      - docker push apgmckay/bumpy:{{ .COMMIT_SHA }}
       - echo "Pushing done."
   build_and_push_docker:
     desc: Build and Push docker image
-    deps:
-      - build_docker
-      - push_docker
+    cmds:
+      - task: build_docker
+      - task: push_docker
   cloc_project:
     desc: Count lines of code for the project
     cmds:
