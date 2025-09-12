@@ -7,7 +7,9 @@ require (
 	github.com/blang/semver/v4 v4.0.0
 	github.com/charmbracelet/fang v0.3.0
 	github.com/charmbracelet/log v0.4.2
+	github.com/confluentinc/confluent-kafka-go v1.9.2
 	github.com/gin-gonic/gin v1.10.1
+	github.com/google/uuid v1.6.0
 	github.com/spf13/cobra v1.9.1
 )
 
