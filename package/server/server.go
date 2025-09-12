@@ -78,7 +78,8 @@ func (s BumpyServer) Run() {
 			}, nil)
 
 			if err != nil {
-				log.Errorf(err.Error())
+				log.Errorf("%s", err.Error())
+				return
 			}
 
 			c.JSON(http.StatusOK, map[string]string{
@@ -129,7 +130,8 @@ func (s BumpyServer) Run() {
 			}, nil)
 
 			if err != nil {
-				log.Errorf(err.Error())
+				log.Errorf("%s", err.Error())
+				return
 			}
 
 			c.JSON(http.StatusOK, map[string]string{
@@ -166,7 +168,7 @@ func (s BumpyServer) Run() {
 			err = v.IncrementPatch()
 
 			if err != nil {
-				log.Errorf("%s", err)
+				log.Errorf("%s", err.Error())
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
@@ -180,7 +182,8 @@ func (s BumpyServer) Run() {
 			}, nil)
 
 			if err != nil {
-				log.Errorf(err.Error())
+				log.Errorf("%s", err.Error())
+				return
 			}
 
 			c.JSON(http.StatusOK, map[string]string{
