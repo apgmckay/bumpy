@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: apgmckay/bumpy
   pullPolicy: IfNotPresent
-  tag: ""
+  tag: "latest"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
