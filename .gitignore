@@ -1,3 +1,2 @@
-terraform.tfstate
-terraform.tfstate.backup
-terraform_provider/terraform-provider-bumpy
+_terraform/**/**/terraform.tfstate
+_terraform/**/**/terraform.tfstate.backup
