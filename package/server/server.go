@@ -31,7 +31,7 @@ func New() BumpyServer {
 func (s BumpyServer) Run() {
 	apiV1 := s.Engine.Group(fmt.Sprintf("/api/v%d", v1))
 	{
-		producer, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": "kafka.default.svc.cluster.local:9092 localhost:9092"})
+		producer, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": "kafka.default.svc.cluster.local:9092"})
 		if err != nil {
 			log.Errorf("%s", err)
 			return
