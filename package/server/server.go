@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/blang/semver/v4"
 	"github.com/charmbracelet/log"
@@ -31,7 +32,7 @@ func New() BumpyServer {
 func (s BumpyServer) Run() {
 	apiV1 := s.Engine.Group(fmt.Sprintf("/api/v%d", v1))
 	{
-		producer, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": "kafka.default.svc.cluster.local:9092"})
+		producer, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": "localhost:9092"})
 		if err != nil {
 			log.Errorf("%s", err)
 			return
@@ -45,6 +46,17 @@ func (s BumpyServer) Run() {
 				log.Errorf("%s", err)
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
+			}
+
+			var packageName string
+
+			if len(c.Query("package_name")) != 0 {
+				_, err := url.Parse(c.Query("package_name"))
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+					return
+				}
+				packageName = c.Query("package_name")
 			}
 
 			if len(c.Query("pre-release")) != 0 {
@@ -70,9 +82,10 @@ func (s BumpyServer) Run() {
 				return
 			}
 
-			payload := map[string]string{
-				"bump":    "major",
-				"version": v.String(),
+			payload := map[string]any{
+				"bump":         "major",
+				"version":      v.String(),
+				"package_name": packageName,
 			}
 
 			jsonBytes, err := json.Marshal(payload)
@@ -108,6 +121,17 @@ func (s BumpyServer) Run() {
 				return
 			}
 
+			var packageName string
+
+			if len(c.Query("package_name")) != 0 {
+				_, err := url.Parse(c.Query("package_name"))
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+					return
+				}
+				packageName = c.Query("package_name")
+			}
+
 			if len(c.Query("pre-release")) != 0 {
 				pVName, err := semver.NewPRVersion(c.Query("pre-release"))
 				if err != nil {
@@ -133,8 +157,9 @@ func (s BumpyServer) Run() {
 			}
 
 			payload := map[string]string{
-				"bump":    "minor",
-				"version": v.String(),
+				"bump":         "minor",
+				"version":      v.String(),
+				"package_name": packageName,
 			}
 
 			jsonBytes, err := json.Marshal(payload)
@@ -170,6 +195,17 @@ func (s BumpyServer) Run() {
 				return
 			}
 
+			var packageName string
+
+			if len(c.Query("package_name")) != 0 {
+				_, err := url.Parse(c.Query("package_name"))
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+					return
+				}
+				packageName = c.Query("package_name")
+			}
+
 			if len(c.Query("pre-release")) != 0 {
 				pVName, err := semver.NewPRVersion(c.Query("pre-release"))
 				if err != nil {
@@ -195,8 +231,9 @@ func (s BumpyServer) Run() {
 			}
 
 			payload := map[string]string{
-				"bump":    "patch",
-				"version": v.String(),
+				"bump":         "patch",
+				"version":      v.String(),
+				"package_name": packageName,
 			}
 
 			jsonBytes, err := json.Marshal(payload)

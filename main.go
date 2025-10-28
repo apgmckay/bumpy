@@ -9,7 +9,11 @@ import (
 func main() {
 	err := cmd.Execute()
 	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
+		errorExit(1, err.Error())
 	}
+}
+
+func errorExit(xCode int, xMsg string) {
+	fmt.Println(xMsg)
+	os.Exit(xCode)
 }

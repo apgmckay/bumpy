@@ -39,3 +39,21 @@ tasks:
       - echo "Counting lines of code for project..."
       - find . -name "*.go" | xargs cloc --force-lang=Go
       - echo "Counting line of code done."
+  kafka_start:
+    desc: Start Kafka
+    cmds:
+      - echo "Kafka install..."
+      - docker run -p 9092:9092 -d apache/kafka:4.1.0
+      - echo "Kafka installed."
+  kafka_stop:
+    desc: Killing Kafka
+    cmds:
+      - echo "Killing Kafka"
+      - docker stop $(docker ps --filter "ancestor=apache/kafka:4.1.0" --format "{{.ID}}")
+      - echo "Kafka killed."
+  helm_install:
+    desc: Install helm chart
+    cmds:
+      - echo "Helm install..."
+      - helm install bumpy ./helm/
+      - echo "Installed."
