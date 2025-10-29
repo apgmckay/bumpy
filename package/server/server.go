@@ -30,13 +30,87 @@ func New() BumpyServer {
 }
 
 func (s BumpyServer) Run() {
-	apiV1 := s.Engine.Group(fmt.Sprintf("/api/v%d", v1))
+	apiV1Path := fmt.Sprintf("/api/v%d", v1)
+	apiV1 := s.Engine.Group(apiV1Path)
 	{
 		producer, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": "localhost:9092"})
 		if err != nil {
 			log.Errorf("%s", err)
 			return
 		}
+
+		apiV1.POST("/major/:version", func(c *gin.Context) {
+			inputVersion := c.Param("version")
+
+			v, err := semver.Make(inputVersion)
+			if err != nil {
+				log.Errorf("%s", err)
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+
+			var packageName string
+
+			if len(c.Query("package_name")) != 0 {
+				_, err := url.Parse(c.Query("package_name"))
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+					return
+				}
+				packageName = c.Query("package_name")
+			}
+
+			if len(c.Query("pre-release")) != 0 {
+				pVName, err := semver.NewPRVersion(c.Query("pre-release"))
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				}
+				v.Pre = append(v.Pre, pVName)
+			}
+
+			if len(c.Query("build")) != 0 {
+				bVName, err := semver.NewBuildVersion(c.Query("build"))
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				}
+				v.Build = append(v.Build, bVName)
+			}
+
+			err = v.IncrementMajor()
+			if err != nil {
+				log.Errorf("%s", err)
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+
+			payload := map[string]any{
+				"bump":         "major",
+				"version":      v.String(),
+				"package_name": packageName,
+			}
+
+			jsonBytes, err := json.Marshal(payload)
+			if err != nil {
+				log.Errorf("%s", err.Error())
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to serialize response"})
+				return
+			}
+
+			topic := "bumpy_send"
+
+			err = producer.Produce(&kafka.Message{
+				TopicPartition: kafka.TopicPartition{Topic: &topic},
+				Key:            []byte(uuid.New().String()),
+				Value:          jsonBytes,
+			}, nil)
+
+			if err != nil {
+				log.Errorf("%s", err.Error())
+				return
+			}
+
+			c.JSON(http.StatusOK, payload)
+		})
 
 		apiV1.GET("/major/:version", func(c *gin.Context) {
 			inputVersion := c.Param("version")
@@ -84,6 +158,61 @@ func (s BumpyServer) Run() {
 
 			payload := map[string]any{
 				"bump":         "major",
+				"version":      v.String(),
+				"package_name": packageName,
+			}
+
+			c.JSON(http.StatusOK, payload)
+		})
+
+		apiV1.POST("/minor/:version", func(c *gin.Context) {
+
+			inputVersion := c.Param("version")
+
+			v, err := semver.Make(inputVersion)
+			if err != nil {
+				log.Errorf("%s", err)
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+
+			var packageName string
+
+			if len(c.Query("package_name")) != 0 {
+				_, err := url.Parse(c.Query("package_name"))
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+					return
+				}
+				packageName = c.Query("package_name")
+			}
+
+			if len(c.Query("pre-release")) != 0 {
+				pVName, err := semver.NewPRVersion(c.Query("pre-release"))
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				}
+				v.Pre = append(v.Pre, pVName)
+			}
+
+			if len(c.Query("build")) != 0 {
+				bVName, err := semver.NewBuildVersion(c.Query("build"))
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				}
+				v.Build = append(v.Build, bVName)
+			}
+
+			err = v.IncrementMinor()
+
+			if err != nil {
+				log.Errorf("%s", err)
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+
+			payload := map[string]string{
+				"bump":         "minor",
 				"version":      v.String(),
 				"package_name": packageName,
 			}
@@ -162,6 +291,61 @@ func (s BumpyServer) Run() {
 				"package_name": packageName,
 			}
 
+			c.JSON(http.StatusOK, payload)
+		})
+
+		apiV1.POST("/patch/:version", func(c *gin.Context) {
+
+			inputVersion := c.Param("version")
+
+			v, err := semver.Make(inputVersion)
+			if err != nil {
+				log.Errorf("%s", err)
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+
+			var packageName string
+
+			if len(c.Query("package_name")) != 0 {
+				_, err := url.Parse(c.Query("package_name"))
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+					return
+				}
+				packageName = c.Query("package_name")
+			}
+
+			if len(c.Query("pre-release")) != 0 {
+				pVName, err := semver.NewPRVersion(c.Query("pre-release"))
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				}
+				v.Pre = append(v.Pre, pVName)
+			}
+
+			if len(c.Query("build")) != 0 {
+				bVName, err := semver.NewBuildVersion(c.Query("build"))
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				}
+				v.Build = append(v.Build, bVName)
+			}
+
+			err = v.IncrementPatch()
+
+			if err != nil {
+				log.Errorf("%s", err.Error())
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+
+			payload := map[string]string{
+				"bump":         "patch",
+				"version":      v.String(),
+				"package_name": packageName,
+			}
+
 			jsonBytes, err := json.Marshal(payload)
 			if err != nil {
 				log.Errorf("%s", err.Error())
@@ -236,38 +420,22 @@ func (s BumpyServer) Run() {
 				"package_name": packageName,
 			}
 
-			jsonBytes, err := json.Marshal(payload)
-			if err != nil {
-				log.Errorf("%s", err.Error())
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to serialize response"})
-				return
-			}
-
-			topic := "bumpy_send"
-
-			err = producer.Produce(&kafka.Message{
-				TopicPartition: kafka.TopicPartition{Topic: &topic},
-				Key:            []byte(uuid.New().String()),
-				Value:          jsonBytes,
-			}, nil)
-
-			if err != nil {
-				log.Errorf("%s", err.Error())
-				return
-			}
-
 			c.JSON(http.StatusOK, payload)
+		})
+
+		apiV1.GET("/endpoints", func(c *gin.Context) {
+			var endpoints []string
+
+			setEndpoints(&endpoints, s.Engine.Routes())
+
+			c.JSON(http.StatusOK, map[string]any{
+				"endpoints": endpoints,
+			})
 		})
 	}
 
 	s.Engine.GET("/", func(c *gin.Context) {
-		var endpoints []string
-
-		setEndpoints(&endpoints, s.Engine.Routes())
-
-		c.JSON(http.StatusOK, map[string]any{
-			"endpoints": endpoints,
-		})
+		c.Redirect(http.StatusTemporaryRedirect, apiV1Path+"/endpoints")
 	})
 
 	/*
