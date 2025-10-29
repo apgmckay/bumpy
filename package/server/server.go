@@ -1,10 +1,13 @@
 package server
 
 import (
+	"embed"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/blang/semver/v4"
 	"github.com/charmbracelet/log"
@@ -12,6 +15,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
+
+//go:embed templates/*
+var templateFS embed.FS
 
 const (
 	v1 = iota + 1
@@ -23,7 +29,9 @@ type BumpyServer struct {
 
 func New() BumpyServer {
 	router := gin.Default()
-	router.LoadHTMLGlob("package/server/templates/*")
+	router.SetHTMLTemplate(
+		mustParseTemplates(templateFS, "templates/*"),
+	)
 
 	return BumpyServer{
 		Engine: router,
@@ -449,4 +457,26 @@ func setEndpoints(e *[]string, routeInfo gin.RoutesInfo) {
 		}
 		*e = append(*e, fmt.Sprintf("%s %s", route.Method, route.Path))
 	}
+}
+
+func mustParseTemplates(fs embed.FS, pattern string) *template.Template {
+	tmpl := template.New("")
+	entries, err := fs.ReadDir(strings.TrimSuffix(pattern, "/*"))
+	if err != nil {
+		log.Fatal("failed to read embedded template dir", "error", err)
+	}
+	for _, e := range entries {
+		if e.IsDir() {
+			continue
+		}
+		content, err := fs.ReadFile(strings.TrimSuffix(pattern, "/*") + "/" + e.Name())
+		if err != nil {
+			log.Fatal("failed to read embedded template", "file", e.Name(), "error", err)
+		}
+		tmpl, err = tmpl.New(e.Name()).Parse(string(content))
+		if err != nil {
+			log.Fatal("failed to parse embedded template", "file", e.Name(), "error", err)
+		}
+	}
+	return tmpl
 }
