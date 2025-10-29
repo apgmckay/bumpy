@@ -25,15 +25,23 @@ func init() {
 	bumpyMajorCmd.PersistentFlags().StringP("version", "v", "", "version you wish to bump")
 	bumpyMajorCmd.PersistentFlags().StringP("pre-release", "p", "", "pre-release version tag to append to the version number")
 	bumpyMajorCmd.PersistentFlags().StringP("build", "b", "", "build version tag to append to the version number")
+	bumpyMajorCmd.PersistentFlags().StringP("package-name", "n", "", "name of the package")
+
+	bumpyMajorCmd.MarkPersistentFlagRequired("package-name")
 
 	bumpyMinorCmd.PersistentFlags().StringP("version", "v", "", "version you wish to bump")
 	bumpyMinorCmd.PersistentFlags().StringP("pre-release", "p", "", "pre-release version tag to append to the version number")
 	bumpyMinorCmd.PersistentFlags().StringP("build", "b", "", "build version tag to append to the version number")
+	bumpyMinorCmd.PersistentFlags().StringP("package-name", "n", "", "name of the package")
+
+	bumpyMinorCmd.MarkPersistentFlagRequired("package-name")
 
 	bumpyPatchCmd.PersistentFlags().StringP("version", "v", "", "version you wish to bump")
 	bumpyPatchCmd.PersistentFlags().StringP("pre-release", "p", "", "pre-release version tag to append to the version number")
 	bumpyPatchCmd.PersistentFlags().StringP("build", "b", "", "build version tag to append to the version number")
+	bumpyPatchCmd.PersistentFlags().StringP("package-name", "n", "", "name of the package")
 
+	bumpyPatchCmd.MarkPersistentFlagRequired("package-name")
 }
 
 func Execute() error {
@@ -84,6 +92,7 @@ var bumpyMajorCmd = &cobra.Command{
 		params["version"] = version
 		params["pre-release"] = cmd.Flag("pre-release").Value.String()
 		params["build"] = cmd.Flag("build").Value.String()
+		params["package_name"] = cmd.Flag("package-name").Value.String()
 
 		bumpedVersion, err := c.BumpMajor(params)
 		if err != nil {
@@ -125,6 +134,7 @@ var bumpyMinorCmd = &cobra.Command{
 		params["version"] = version
 		params["pre-release"] = cmd.Flag("pre-release").Value.String()
 		params["build"] = cmd.Flag("build").Value.String()
+		params["package_name"] = cmd.Flag("package-name").Value.String()
 
 		bumpedVersion, err := c.BumpMinor(params)
 		if err != nil {
@@ -166,6 +176,7 @@ var bumpyPatchCmd = &cobra.Command{
 		params["version"] = version
 		params["pre-release"] = cmd.Flag("pre-release").Value.String()
 		params["build"] = cmd.Flag("build").Value.String()
+		params["package_name"] = cmd.Flag("package-name").Value.String()
 
 		bumpedVersion, err := c.BumpPatch(params)
 		if err != nil {
