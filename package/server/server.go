@@ -23,6 +23,7 @@ type BumpyServer struct {
 
 func New() BumpyServer {
 	router := gin.Default()
+	router.LoadHTMLGlob("package/server/templates/*")
 
 	return BumpyServer{
 		Engine: router,
@@ -435,13 +436,8 @@ func (s BumpyServer) Run() {
 	}
 
 	s.Engine.GET("/", func(c *gin.Context) {
-		c.Redirect(http.StatusTemporaryRedirect, apiV1Path+"/endpoints")
+		c.HTML(http.StatusOK, "index.tmpl", map[string]string{})
 	})
-
-	/*
-		TODO:
-			- HTML endpoints go here
-	*/
 
 	s.Engine.Run(":8080")
 }
