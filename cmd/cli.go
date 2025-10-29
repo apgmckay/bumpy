@@ -94,7 +94,7 @@ var bumpyMajorCmd = &cobra.Command{
 		params["build"] = cmd.Flag("build").Value.String()
 		params["package_name"] = cmd.Flag("package-name").Value.String()
 
-		bumpedVersion, err := c.BumpMajor(params)
+		bumpedVersion, err := c.GetMajor(params)
 		if err != nil {
 			return err
 		}
@@ -136,7 +136,7 @@ var bumpyMinorCmd = &cobra.Command{
 		params["build"] = cmd.Flag("build").Value.String()
 		params["package_name"] = cmd.Flag("package-name").Value.String()
 
-		bumpedVersion, err := c.BumpMinor(params)
+		bumpedVersion, err := c.GetMinor(params)
 		if err != nil {
 			return err
 		}
@@ -178,7 +178,7 @@ var bumpyPatchCmd = &cobra.Command{
 		params["build"] = cmd.Flag("build").Value.String()
 		params["package_name"] = cmd.Flag("package-name").Value.String()
 
-		bumpedVersion, err := c.BumpPatch(params)
+		bumpedVersion, err := c.GetPatch(params)
 		if err != nil {
 			return err
 		}
