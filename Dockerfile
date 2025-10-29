@@ -1,10 +1,22 @@
-FROM golang:1.24-alpine AS build
+FROM golang:1.24-bullseye AS build
 
-COPY ./ /go/src/ 
-RUN go build -C /go/src/.
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    pkg-config \
+    librdkafka-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-FROM alpine:latest AS release
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
 
-COPY --from=build /go/src/bumpy /usr/bin/bumpy
+RUN go build -o /bin/bumpy .
 
+# Runtime stage
+FROM debian:bullseye-slim AS release
+RUN apt-get update && apt-get install -y librdkafka1 && rm -rf /var/lib/apt/lists/*
+
+COPY --from=build /bin/bumpy /usr/bin/bumpy
 ENTRYPOINT ["bumpy","server"]

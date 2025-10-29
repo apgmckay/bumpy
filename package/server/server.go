@@ -1,12 +1,16 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/blang/semver/v4"
 	"github.com/charmbracelet/log"
+	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 const (
@@ -28,6 +32,12 @@ func New() BumpyServer {
 func (s BumpyServer) Run() {
 	apiV1 := s.Engine.Group(fmt.Sprintf("/api/v%d", v1))
 	{
+		producer, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": "localhost:9092"})
+		if err != nil {
+			log.Errorf("%s", err)
+			return
+		}
+
 		apiV1.GET("/major/:version", func(c *gin.Context) {
 			inputVersion := c.Param("version")
 
@@ -36,6 +46,17 @@ func (s BumpyServer) Run() {
 				log.Errorf("%s", err)
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
+			}
+
+			var packageName string
+
+			if len(c.Query("package_name")) != 0 {
+				_, err := url.Parse(c.Query("package_name"))
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+					return
+				}
+				packageName = c.Query("package_name")
 			}
 
 			if len(c.Query("pre-release")) != 0 {
@@ -55,16 +76,39 @@ func (s BumpyServer) Run() {
 			}
 
 			err = v.IncrementMajor()
-
 			if err != nil {
 				log.Errorf("%s", err)
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
 
-			c.JSON(http.StatusOK, map[string]string{
-				"version": v.String(),
-			})
+			payload := map[string]any{
+				"bump":         "major",
+				"version":      v.String(),
+				"package_name": packageName,
+			}
+
+			jsonBytes, err := json.Marshal(payload)
+			if err != nil {
+				log.Errorf("%s", err.Error())
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to serialize response"})
+				return
+			}
+
+			topic := "bumpy_send"
+
+			err = producer.Produce(&kafka.Message{
+				TopicPartition: kafka.TopicPartition{Topic: &topic},
+				Key:            []byte(uuid.New().String()),
+				Value:          jsonBytes,
+			}, nil)
+
+			if err != nil {
+				log.Errorf("%s", err.Error())
+				return
+			}
+
+			c.JSON(http.StatusOK, payload)
 		})
 
 		apiV1.GET("/minor/:version", func(c *gin.Context) {
@@ -75,6 +119,17 @@ func (s BumpyServer) Run() {
 				log.Errorf("%s", err)
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
+			}
+
+			var packageName string
+
+			if len(c.Query("package_name")) != 0 {
+				_, err := url.Parse(c.Query("package_name"))
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+					return
+				}
+				packageName = c.Query("package_name")
 			}
 
 			if len(c.Query("pre-release")) != 0 {
@@ -101,9 +156,33 @@ func (s BumpyServer) Run() {
 				return
 			}
 
-			c.JSON(http.StatusOK, map[string]string{
-				"version": v.String(),
-			})
+			payload := map[string]string{
+				"bump":         "minor",
+				"version":      v.String(),
+				"package_name": packageName,
+			}
+
+			jsonBytes, err := json.Marshal(payload)
+			if err != nil {
+				log.Errorf("%s", err.Error())
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to serialize response"})
+				return
+			}
+
+			topic := "bumpy_send"
+
+			err = producer.Produce(&kafka.Message{
+				TopicPartition: kafka.TopicPartition{Topic: &topic},
+				Key:            []byte(uuid.New().String()),
+				Value:          jsonBytes,
+			}, nil)
+
+			if err != nil {
+				log.Errorf("%s", err.Error())
+				return
+			}
+
+			c.JSON(http.StatusOK, payload)
 		})
 
 		apiV1.GET("/patch/:version", func(c *gin.Context) {
@@ -114,6 +193,17 @@ func (s BumpyServer) Run() {
 				log.Errorf("%s", err)
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
+			}
+
+			var packageName string
+
+			if len(c.Query("package_name")) != 0 {
+				_, err := url.Parse(c.Query("package_name"))
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+					return
+				}
+				packageName = c.Query("package_name")
 			}
 
 			if len(c.Query("pre-release")) != 0 {
@@ -135,14 +225,38 @@ func (s BumpyServer) Run() {
 			err = v.IncrementPatch()
 
 			if err != nil {
-				log.Errorf("%s", err)
+				log.Errorf("%s", err.Error())
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				return
 			}
 
-			c.JSON(http.StatusOK, map[string]string{
-				"version": v.String(),
-			})
+			payload := map[string]string{
+				"bump":         "patch",
+				"version":      v.String(),
+				"package_name": packageName,
+			}
+
+			jsonBytes, err := json.Marshal(payload)
+			if err != nil {
+				log.Errorf("%s", err.Error())
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to serialize response"})
+				return
+			}
+
+			topic := "bumpy_send"
+
+			err = producer.Produce(&kafka.Message{
+				TopicPartition: kafka.TopicPartition{Topic: &topic},
+				Key:            []byte(uuid.New().String()),
+				Value:          jsonBytes,
+			}, nil)
+
+			if err != nil {
+				log.Errorf("%s", err.Error())
+				return
+			}
+
+			c.JSON(http.StatusOK, payload)
 		})
 	}
 

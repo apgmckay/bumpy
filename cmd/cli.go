@@ -81,7 +81,7 @@ var bumpyMajorCmd = &cobra.Command{
 
 		params := make(map[string]string, 2)
 
-		params["version"] = cmd.Flag("version").Value.String()
+		params["version"] = version
 		params["pre-release"] = cmd.Flag("pre-release").Value.String()
 		params["build"] = cmd.Flag("build").Value.String()
 
@@ -122,7 +122,7 @@ var bumpyMinorCmd = &cobra.Command{
 
 		params := make(map[string]string, 2)
 
-		params["version"] = cmd.Flag("version").Value.String()
+		params["version"] = version
 		params["pre-release"] = cmd.Flag("pre-release").Value.String()
 		params["build"] = cmd.Flag("build").Value.String()
 
@@ -163,7 +163,7 @@ var bumpyPatchCmd = &cobra.Command{
 
 		params := make(map[string]string, 2)
 
-		params["version"] = cmd.Flag("version").Value.String()
+		params["version"] = version
 		params["pre-release"] = cmd.Flag("pre-release").Value.String()
 		params["build"] = cmd.Flag("build").Value.String()
 

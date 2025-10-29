@@ -19,30 +19,14 @@ At the moment you will need to set `GOPRIVATE=github.com/apgmckay` in your envir
 
 This project uses [task](https://taskfile.dev/) to manage it's builds.
 
+This project uses [Kafka](https://kafka.apache.org/) to drive events, you will need to run the terraform code under `_terraform` to create the required topics.
+
+There is a script under `scripts` that can be used to consume events.
+
+### Bumpy Client
+
+Check [here](https://github.com/apgmckay/bumpy-client) for Bumpy client.
+
 ### Terraform Provider
 
-Setup a `$HOME/.terraformrc` file something like the below:
-
-```
-provider_installation {
-  dev_overrides {
-    "registry.terraform.io/bumpycorp/bumpy" = "/absolute/path/to/bumpy/terraform_provider"
-  }
-  direct {}
-}
-```
-
-This allows for overriding of the registry config for local development, which means that you don't need to install terraform providers via `terraform init`.
-
-Compile the terraform provider using the [task](https://taskfile.dev) file.
-
-Start the grpc server for the compiled provder, this will return you a `TF_REATTACH_PROVIDERS` environment variable that you will need to set in the shell where you are going to run terraform, in this doc we will use the example/ dir.
-
-Change directories in to example and run terraform.
-
-```
-# Set TF_REATTACH_PROVIDERS returned from setting up the grpc server for the terraform provider 
-cd example
-terraform plan
-terraform apply
-```
+Check [here](https://github.com/apgmckay/terraform-provider-bumpy) for terraform provider. 
