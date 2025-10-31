@@ -26,6 +26,7 @@ func init() {
 	bumpyMajorCmd.PersistentFlags().StringP("pre-release", "p", "", "pre-release version tag to append to the version number")
 	bumpyMajorCmd.PersistentFlags().StringP("build", "b", "", "build version tag to append to the version number")
 	bumpyMajorCmd.PersistentFlags().StringP("package-name", "n", "", "name of the package")
+	bumpyMajorCmd.PersistentFlags().Bool("event", false, "post event from bump")
 
 	bumpyMajorCmd.MarkPersistentFlagRequired("package-name")
 
@@ -33,6 +34,7 @@ func init() {
 	bumpyMinorCmd.PersistentFlags().StringP("pre-release", "p", "", "pre-release version tag to append to the version number")
 	bumpyMinorCmd.PersistentFlags().StringP("build", "b", "", "build version tag to append to the version number")
 	bumpyMinorCmd.PersistentFlags().StringP("package-name", "n", "", "name of the package")
+	bumpyMinorCmd.PersistentFlags().Bool("event", false, "post event from bump")
 
 	bumpyMinorCmd.MarkPersistentFlagRequired("package-name")
 
@@ -40,6 +42,7 @@ func init() {
 	bumpyPatchCmd.PersistentFlags().StringP("pre-release", "p", "", "pre-release version tag to append to the version number")
 	bumpyPatchCmd.PersistentFlags().StringP("build", "b", "", "build version tag to append to the version number")
 	bumpyPatchCmd.PersistentFlags().StringP("package-name", "n", "", "name of the package")
+	bumpyPatchCmd.PersistentFlags().Bool("event", false, "post event from bump")
 
 	bumpyPatchCmd.MarkPersistentFlagRequired("package-name")
 }
@@ -94,9 +97,19 @@ var bumpyMajorCmd = &cobra.Command{
 		params["build"] = cmd.Flag("build").Value.String()
 		params["package_name"] = cmd.Flag("package-name").Value.String()
 
-		bumpedVersion, err := c.GetMajor(params)
-		if err != nil {
-			return err
+		var bumpedVersion string
+
+		sendEvent, _ := cmd.Flags().GetBool("event")
+		if sendEvent {
+			bumpedVersion, err = c.PostMajor(params, strings.NewReader(""))
+			if err != nil {
+				return err
+			}
+		} else {
+			bumpedVersion, err = c.GetMajor(params)
+			if err != nil {
+				return err
+			}
 		}
 
 		fmt.Println(bumpedVersion)
@@ -136,9 +149,19 @@ var bumpyMinorCmd = &cobra.Command{
 		params["build"] = cmd.Flag("build").Value.String()
 		params["package_name"] = cmd.Flag("package-name").Value.String()
 
-		bumpedVersion, err := c.GetMinor(params)
-		if err != nil {
-			return err
+		var bumpedVersion string
+
+		sendEvent, _ := cmd.Flags().GetBool("event")
+		if sendEvent {
+			bumpedVersion, err = c.PostMinor(params, strings.NewReader(""))
+			if err != nil {
+				return err
+			}
+		} else {
+			bumpedVersion, err = c.GetMinor(params)
+			if err != nil {
+				return err
+			}
 		}
 
 		fmt.Println(bumpedVersion)
@@ -178,9 +201,19 @@ var bumpyPatchCmd = &cobra.Command{
 		params["build"] = cmd.Flag("build").Value.String()
 		params["package_name"] = cmd.Flag("package-name").Value.String()
 
-		bumpedVersion, err := c.GetPatch(params)
-		if err != nil {
-			return err
+		var bumpedVersion string
+
+		sendEvent, _ := cmd.Flags().GetBool("event")
+		if sendEvent {
+			bumpedVersion, err = c.PostPatch(params, strings.NewReader(""))
+			if err != nil {
+				return err
+			}
+		} else {
+			bumpedVersion, err = c.GetPatch(params)
+			if err != nil {
+				return err
+			}
 		}
 
 		fmt.Println(bumpedVersion)

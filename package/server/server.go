@@ -443,7 +443,15 @@ func (s BumpyServer) Run() {
 		})
 	}
 
+	/*
+		NOTE: Frontend
+	*/
+
 	s.Engine.GET("/", func(c *gin.Context) {
+		c.Redirect(http.StatusTemporaryRedirect, "/bumpy")
+	})
+
+	s.Engine.GET("/bumpy", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.tmpl", map[string]string{})
 	})
 
