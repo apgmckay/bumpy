@@ -69,6 +69,7 @@ func BumpyRootCmd() *cobra.Command {
 
 var bumpyBlockedCmd = &cobra.Command{
 	Use:   "blocked",
+	Long:  "Bumpy has a blocked status to indicate if deploys for the package can happen",
 	Short: "Bumpy blocked status",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		c, err := client.New("http://localhost:8080", "1s")
