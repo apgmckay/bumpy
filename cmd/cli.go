@@ -17,35 +17,64 @@ import (
 var rootCmd = BumpyRootCmd()
 
 func init() {
+	rootCmd.AddCommand(bumpyGetCmd)
+	rootCmd.AddCommand(bumpySetCmd)
+
 	rootCmd.AddCommand(bumpyServerCmd)
-	rootCmd.AddCommand(bumpyMajorCmd)
-	rootCmd.AddCommand(bumpyMinorCmd)
-	rootCmd.AddCommand(bumpyPatchCmd)
+
+	bumpyGetCmd.AddCommand(bumpyGetMajorCmd)
+	bumpyGetCmd.AddCommand(bumpyGetMinorCmd)
+	bumpyGetCmd.AddCommand(bumpyGetPatchCmd)
+
+	bumpySetCmd.AddCommand(bumpySetMajorCmd)
+	bumpySetCmd.AddCommand(bumpySetMinorCmd)
+	bumpySetCmd.AddCommand(bumpySetPatchCmd)
+
 	rootCmd.AddCommand(bumpyBlockedCmd)
 
-	bumpyMajorCmd.PersistentFlags().StringP("version", "v", "", "version you wish to bump")
-	bumpyMajorCmd.PersistentFlags().StringP("pre-release", "p", "", "pre-release version tag to append to the version number")
-	bumpyMajorCmd.PersistentFlags().StringP("build", "b", "", "build version tag to append to the version number")
-	bumpyMajorCmd.PersistentFlags().StringP("package-name", "n", "", "name of the package")
-	bumpyMajorCmd.PersistentFlags().Bool("event", false, "post event from bump")
+	bumpyGetMajorCmd.PersistentFlags().StringP("version", "v", "", "version you wish to bump")
+	bumpyGetMajorCmd.PersistentFlags().StringP("pre-release", "p", "", "pre-release version tag to append to the version number")
+	bumpyGetMajorCmd.PersistentFlags().StringP("build", "b", "", "build version tag to append to the version number")
+	bumpyGetMajorCmd.PersistentFlags().StringP("package-name", "n", "", "name of the package")
 
-	bumpyMajorCmd.MarkPersistentFlagRequired("package-name")
+	bumpyGetMajorCmd.MarkPersistentFlagRequired("package-name")
 
-	bumpyMinorCmd.PersistentFlags().StringP("version", "v", "", "version you wish to bump")
-	bumpyMinorCmd.PersistentFlags().StringP("pre-release", "p", "", "pre-release version tag to append to the version number")
-	bumpyMinorCmd.PersistentFlags().StringP("build", "b", "", "build version tag to append to the version number")
-	bumpyMinorCmd.PersistentFlags().StringP("package-name", "n", "", "name of the package")
-	bumpyMinorCmd.PersistentFlags().Bool("event", false, "post event from bump")
+	bumpyGetMinorCmd.PersistentFlags().StringP("version", "v", "", "version you wish to bump")
+	bumpyGetMinorCmd.PersistentFlags().StringP("pre-release", "p", "", "pre-release version tag to append to the version number")
+	bumpyGetMinorCmd.PersistentFlags().StringP("build", "b", "", "build version tag to append to the version number")
+	bumpyGetMinorCmd.PersistentFlags().StringP("package-name", "n", "", "name of the package")
 
-	bumpyMinorCmd.MarkPersistentFlagRequired("package-name")
+	bumpyGetMinorCmd.MarkPersistentFlagRequired("package-name")
 
-	bumpyPatchCmd.PersistentFlags().StringP("version", "v", "", "version you wish to bump")
-	bumpyPatchCmd.PersistentFlags().StringP("pre-release", "p", "", "pre-release version tag to append to the version number")
-	bumpyPatchCmd.PersistentFlags().StringP("build", "b", "", "build version tag to append to the version number")
-	bumpyPatchCmd.PersistentFlags().StringP("package-name", "n", "", "name of the package")
-	bumpyPatchCmd.PersistentFlags().Bool("event", false, "post event from bump")
+	bumpyGetPatchCmd.PersistentFlags().StringP("version", "v", "", "version you wish to bump")
+	bumpyGetPatchCmd.PersistentFlags().StringP("pre-release", "p", "", "pre-release version tag to append to the version number")
+	bumpyGetPatchCmd.PersistentFlags().StringP("build", "b", "", "build version tag to append to the version number")
+	bumpyGetPatchCmd.PersistentFlags().StringP("package-name", "n", "", "name of the package")
 
-	bumpyPatchCmd.MarkPersistentFlagRequired("package-name")
+	bumpyGetPatchCmd.MarkPersistentFlagRequired("package-name")
+
+	//
+
+	bumpySetMajorCmd.PersistentFlags().StringP("version", "v", "", "version you wish to bump")
+	bumpySetMajorCmd.PersistentFlags().StringP("pre-release", "p", "", "pre-release version tag to append to the version number")
+	bumpySetMajorCmd.PersistentFlags().StringP("build", "b", "", "build version tag to append to the version number")
+	bumpySetMajorCmd.PersistentFlags().StringP("package-name", "n", "", "name of the package")
+
+	bumpySetMajorCmd.MarkPersistentFlagRequired("package-name")
+
+	bumpySetMinorCmd.PersistentFlags().StringP("version", "v", "", "version you wish to bump")
+	bumpySetMinorCmd.PersistentFlags().StringP("pre-release", "p", "", "pre-release version tag to append to the version number")
+	bumpySetMinorCmd.PersistentFlags().StringP("build", "b", "", "build version tag to append to the version number")
+	bumpySetMinorCmd.PersistentFlags().StringP("package-name", "n", "", "name of the package")
+
+	bumpySetMinorCmd.MarkPersistentFlagRequired("package-name")
+
+	bumpySetPatchCmd.PersistentFlags().StringP("version", "v", "", "version you wish to bump")
+	bumpySetPatchCmd.PersistentFlags().StringP("pre-release", "p", "", "pre-release version tag to append to the version number")
+	bumpySetPatchCmd.PersistentFlags().StringP("build", "b", "", "build version tag to append to the version number")
+	bumpySetPatchCmd.PersistentFlags().StringP("package-name", "n", "", "name of the package")
+
+	bumpySetPatchCmd.MarkPersistentFlagRequired("package-name")
 }
 
 func Execute() error {
@@ -65,6 +94,18 @@ func BumpyRootCmd() *cobra.Command {
 			return nil
 		},
 	}
+}
+
+var bumpyGetCmd = &cobra.Command{
+	Use:   "get",
+	Long:  "Get bumpy version information for an application",
+	Short: "Get bumpy version information for an application",
+}
+
+var bumpySetCmd = &cobra.Command{
+	Use:   "set",
+	Long:  "Set bumpy version information for an application",
+	Short: "Set bumpy version information for an application",
 }
 
 var bumpyBlockedCmd = &cobra.Command{
@@ -87,7 +128,7 @@ var bumpyBlockedCmd = &cobra.Command{
 	},
 }
 
-var bumpyMajorCmd = &cobra.Command{
+var bumpyGetMajorCmd = &cobra.Command{
 	Use:   "major",
 	Short: "Bump major version",
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -139,7 +180,7 @@ var bumpyMajorCmd = &cobra.Command{
 	},
 }
 
-var bumpyMinorCmd = &cobra.Command{
+var bumpyGetMinorCmd = &cobra.Command{
 	Use:   "minor",
 	Short: "Bump minor version",
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -191,7 +232,7 @@ var bumpyMinorCmd = &cobra.Command{
 	},
 }
 
-var bumpyPatchCmd = &cobra.Command{
+var bumpyGetPatchCmd = &cobra.Command{
 	Use:   "patch",
 	Short: "Bump patch version",
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -235,6 +276,138 @@ var bumpyPatchCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
+		}
+
+		fmt.Println(bumpedVersion)
+
+		return nil
+	},
+}
+
+var bumpySetPatchCmd = &cobra.Command{
+	Use:   "patch",
+	Short: "Bump patch version",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		c, err := client.New("http://localhost:8080", "1s")
+		if err != nil {
+			return err
+		}
+
+		version := cmd.Flag("version").Value.String()
+
+		stat, _ := os.Stdin.Stat()
+		if version == "" {
+			if (stat.Mode() & os.ModeCharDevice) == 0 {
+				input, err := io.ReadAll(os.Stdin)
+				if err != nil {
+					log.Fatalf("Failed to read from stdin: %v", err)
+				}
+				version = strings.TrimSpace(string(input))
+			} else {
+				return fmt.Errorf("version not provided, Use --version or pipe it via stdin")
+			}
+		}
+
+		params := make(map[string]string, 2)
+
+		params["version"] = version
+		params["pre-release"] = cmd.Flag("pre-release").Value.String()
+		params["build"] = cmd.Flag("build").Value.String()
+		params["package_name"] = cmd.Flag("package-name").Value.String()
+
+		var bumpedVersion string
+
+		bumpedVersion, err = c.PostBumpPatch(params, strings.NewReader(""))
+		if err != nil {
+			return err
+		}
+
+		fmt.Println(bumpedVersion)
+
+		return nil
+	},
+}
+
+var bumpySetMinorCmd = &cobra.Command{
+	Use:   "minor",
+	Short: "Bump minor version",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		c, err := client.New("http://localhost:8080", "1s")
+		if err != nil {
+			return err
+		}
+
+		version := cmd.Flag("version").Value.String()
+
+		stat, _ := os.Stdin.Stat()
+		if version == "" {
+			if (stat.Mode() & os.ModeCharDevice) == 0 {
+				input, err := io.ReadAll(os.Stdin)
+				if err != nil {
+					log.Fatalf("Failed to read from stdin: %v", err)
+				}
+				version = strings.TrimSpace(string(input))
+			} else {
+				return fmt.Errorf("version not provided, Use --version or pipe it via stdin")
+			}
+		}
+
+		params := make(map[string]string, 2)
+
+		params["version"] = version
+		params["pre-release"] = cmd.Flag("pre-release").Value.String()
+		params["build"] = cmd.Flag("build").Value.String()
+		params["package_name"] = cmd.Flag("package-name").Value.String()
+
+		var bumpedVersion string
+
+		bumpedVersion, err = c.PostBumpMinor(params, strings.NewReader(""))
+		if err != nil {
+			return err
+		}
+
+		fmt.Println(bumpedVersion)
+
+		return nil
+	},
+}
+
+var bumpySetMajorCmd = &cobra.Command{
+	Use:   "major",
+	Short: "Bump major version",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		c, err := client.New("http://localhost:8080", "1s")
+		if err != nil {
+			return err
+		}
+
+		version := cmd.Flag("version").Value.String()
+
+		stat, _ := os.Stdin.Stat()
+		if version == "" {
+			if (stat.Mode() & os.ModeCharDevice) == 0 {
+				input, err := io.ReadAll(os.Stdin)
+				if err != nil {
+					log.Fatalf("Failed to read from stdin: %v", err)
+				}
+				version = strings.TrimSpace(string(input))
+			} else {
+				return fmt.Errorf("version not provided, Use --version or pipe it via stdin")
+			}
+		}
+
+		params := make(map[string]string, 2)
+
+		params["version"] = version
+		params["pre-release"] = cmd.Flag("pre-release").Value.String()
+		params["build"] = cmd.Flag("build").Value.String()
+		params["package_name"] = cmd.Flag("package-name").Value.String()
+
+		var bumpedVersion string
+
+		bumpedVersion, err = c.PostBumpMajor(params, strings.NewReader(""))
+		if err != nil {
+			return err
 		}
 
 		fmt.Println(bumpedVersion)
