@@ -3,7 +3,7 @@ module bumpy
 go 1.24.2
 
 require (
-	github.com/apgmckay/bumpy-client v0.4.0
+	github.com/apgmckay/bumpy-client v0.11.0
 	github.com/blang/semver/v4 v4.0.0
 	github.com/charmbracelet/bubbletea v1.3.10
 	github.com/charmbracelet/fang v0.3.0
@@ -68,3 +68,6 @@ require (
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+// NOTE: uncomment this to use local bumpy-client for development
+// replace github.com/apgmckay/bumpy-client => ../bumpy-client

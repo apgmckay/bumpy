@@ -434,9 +434,8 @@ func (s BumpyServer) Run() {
 
 		apiV1.GET("/blocked", func(c *gin.Context) {
 			c.JSON(http.StatusOK, map[string]any{
-				"blocked": map[string]any{
-					"status": false,
-				},
+				// TODO: this should be a store
+				"status": false,
 			})
 		})
 

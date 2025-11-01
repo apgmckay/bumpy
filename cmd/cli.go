@@ -21,6 +21,7 @@ func init() {
 	rootCmd.AddCommand(bumpyMajorCmd)
 	rootCmd.AddCommand(bumpyMinorCmd)
 	rootCmd.AddCommand(bumpyPatchCmd)
+	rootCmd.AddCommand(bumpyBlockedCmd)
 
 	bumpyMajorCmd.PersistentFlags().StringP("version", "v", "", "version you wish to bump")
 	bumpyMajorCmd.PersistentFlags().StringP("pre-release", "p", "", "pre-release version tag to append to the version number")
@@ -66,6 +67,25 @@ func BumpyRootCmd() *cobra.Command {
 	}
 }
 
+var bumpyBlockedCmd = &cobra.Command{
+	Use:   "blocked",
+	Short: "Bumpy blocked status",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		c, err := client.New("http://localhost:8080", "1s")
+		if err != nil {
+			return err
+		}
+		result, err := c.GetBlocked()
+		if err != nil {
+			return err
+		}
+
+		fmt.Println(result)
+
+		return nil
+	},
+}
+
 var bumpyMajorCmd = &cobra.Command{
 	Use:   "major",
 	Short: "Bump major version",
@@ -101,12 +121,12 @@ var bumpyMajorCmd = &cobra.Command{
 
 		sendEvent, _ := cmd.Flags().GetBool("event")
 		if sendEvent {
-			bumpedVersion, err = c.PostMajor(params, strings.NewReader(""))
+			bumpedVersion, err = c.PostBumpMajor(params, strings.NewReader(""))
 			if err != nil {
 				return err
 			}
 		} else {
-			bumpedVersion, err = c.GetMajor(params)
+			bumpedVersion, err = c.GetBumpMajor(params)
 			if err != nil {
 				return err
 			}
@@ -153,12 +173,12 @@ var bumpyMinorCmd = &cobra.Command{
 
 		sendEvent, _ := cmd.Flags().GetBool("event")
 		if sendEvent {
-			bumpedVersion, err = c.PostMinor(params, strings.NewReader(""))
+			bumpedVersion, err = c.PostBumpMinor(params, strings.NewReader(""))
 			if err != nil {
 				return err
 			}
 		} else {
-			bumpedVersion, err = c.GetMinor(params)
+			bumpedVersion, err = c.GetBumpMinor(params)
 			if err != nil {
 				return err
 			}
@@ -205,12 +225,12 @@ var bumpyPatchCmd = &cobra.Command{
 
 		sendEvent, _ := cmd.Flags().GetBool("event")
 		if sendEvent {
-			bumpedVersion, err = c.PostPatch(params, strings.NewReader(""))
+			bumpedVersion, err = c.PostBumpPatch(params, strings.NewReader(""))
 			if err != nil {
 				return err
 			}
 		} else {
-			bumpedVersion, err = c.GetPatch(params)
+			bumpedVersion, err = c.GetBumpPatch(params)
 			if err != nil {
 				return err
 			}
