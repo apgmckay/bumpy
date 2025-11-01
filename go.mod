@@ -3,7 +3,7 @@ module bumpy
 go 1.24.2
 
 require (
-	github.com/apgmckay/bumpy-client v0.3.0
+	github.com/apgmckay/bumpy-client v0.4.0
 	github.com/blang/semver/v4 v4.0.0
 	github.com/charmbracelet/bubbletea v1.3.10
 	github.com/charmbracelet/fang v0.3.0

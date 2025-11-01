@@ -5,8 +5,8 @@ github.com/actgardner/gogen-avro/v10 v10.1.0/go.mod h1:o+ybmVjEa27AAr35FRqU98DJu
 github.com/actgardner/gogen-avro/v10 v10.2.1/go.mod h1:QUhjeHPchheYmMDni/Nx7VB0RsT/ee8YIgGY/xpEQgQ=
 github.com/actgardner/gogen-avro/v9 v9.1.0/go.mod h1:nyTj6wPqDJoxM3qdnjcLv+EnMDSDFqE0qDpva2QRmKc=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
-github.com/apgmckay/bumpy-client v0.3.0 h1:8amqNB2/3DuhIgscuM6vHPcLe15kQCBsjZtAcGsYFaA=
-github.com/apgmckay/bumpy-client v0.3.0/go.mod h1:tlsZWu0UMLHtOCkDltDvqyabLD8exqJFOibDsc3H3eY=
+github.com/apgmckay/bumpy-client v0.4.0 h1:p2xrNv2r0CpMLrmsELMyKdbX8M5KyuXEb6vRI4Jg3Rc=
+github.com/apgmckay/bumpy-client v0.4.0/go.mod h1:tlsZWu0UMLHtOCkDltDvqyabLD8exqJFOibDsc3H3eY=
 github.com/aymanbagabas/go-osc52/v2 v2.0.1 h1:HwpRHbFMcZLEVr42D4p7XBqjyuxQH5SMiErDT4WkJ2k=
 github.com/aymanbagabas/go-osc52/v2 v2.0.1/go.mod h1:uYgXzlJ7ZpABp8OJ+exZzJJhRNQ2ASbcXHWsFqH8hp8=
 github.com/aymanbagabas/go-udiff v0.2.0 h1:TK0fH4MteXUDspT88n8CKzvK0X9O2xu9yQjWpi6yML8=

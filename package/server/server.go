@@ -48,7 +48,7 @@ func (s BumpyServer) Run() {
 			return
 		}
 
-		apiV1.POST("/major/:version", func(c *gin.Context) {
+		apiV1.POST("/bump/major/:version", func(c *gin.Context) {
 			inputVersion := c.Param("version")
 
 			v, err := semver.Make(inputVersion)
@@ -121,7 +121,7 @@ func (s BumpyServer) Run() {
 			c.JSON(http.StatusOK, payload)
 		})
 
-		apiV1.GET("/major/:version", func(c *gin.Context) {
+		apiV1.GET("/bump/major/:version", func(c *gin.Context) {
 			inputVersion := c.Param("version")
 
 			v, err := semver.Make(inputVersion)
@@ -174,7 +174,7 @@ func (s BumpyServer) Run() {
 			c.JSON(http.StatusOK, payload)
 		})
 
-		apiV1.POST("/minor/:version", func(c *gin.Context) {
+		apiV1.POST("/bump/minor/:version", func(c *gin.Context) {
 
 			inputVersion := c.Param("version")
 
@@ -249,7 +249,7 @@ func (s BumpyServer) Run() {
 			c.JSON(http.StatusOK, payload)
 		})
 
-		apiV1.GET("/minor/:version", func(c *gin.Context) {
+		apiV1.GET("/bump/minor/:version", func(c *gin.Context) {
 			inputVersion := c.Param("version")
 
 			v, err := semver.Make(inputVersion)
@@ -303,7 +303,7 @@ func (s BumpyServer) Run() {
 			c.JSON(http.StatusOK, payload)
 		})
 
-		apiV1.POST("/patch/:version", func(c *gin.Context) {
+		apiV1.POST("/bump/patch/:version", func(c *gin.Context) {
 
 			inputVersion := c.Param("version")
 
@@ -378,7 +378,7 @@ func (s BumpyServer) Run() {
 			c.JSON(http.StatusOK, payload)
 		})
 
-		apiV1.GET("/patch/:version", func(c *gin.Context) {
+		apiV1.GET("/bump/patch/:version", func(c *gin.Context) {
 			inputVersion := c.Param("version")
 
 			v, err := semver.Make(inputVersion)
@@ -430,6 +430,14 @@ func (s BumpyServer) Run() {
 			}
 
 			c.JSON(http.StatusOK, payload)
+		})
+
+		apiV1.GET("/blocked", func(c *gin.Context) {
+			c.JSON(http.StatusOK, map[string]any{
+				"blocked": map[string]any{
+					"status": false,
+				},
+			})
 		})
 
 		apiV1.GET("/endpoints", func(c *gin.Context) {
