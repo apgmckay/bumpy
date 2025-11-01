@@ -8,8 +8,8 @@ terraform {
 }
 
 provider "kafka" {
-  bootstrap_servers = ["localhost:9092"]
-  tls_enabled       = false
+  bootstrap_servers = [format("%s:%s", var.kafka_hostname, var.kafka_hostport)]
+  tls_enabled       = var.kafka_tls_enabled
 }
 
 resource "kafka_topic" "bumpy_send" {
