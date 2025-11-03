@@ -57,3 +57,10 @@ tasks:
       - echo "Helm install..."
       - helm install bumpy ./helm/
       - echo "Installed."
+  install:
+    desc: install bumpy to your local system
+    cmds:
+      - echo "Installing bumpy..."
+      - task: build
+      - sudo mv ./bumpy /usr/bin/bumpy
+      - echo "Installed."
